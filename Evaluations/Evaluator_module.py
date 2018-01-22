@@ -93,31 +93,19 @@ def Mean_Average_precision(predictions, n=10, threshold=3.5):
                 threshold: define the minimum rating to take a document as relevant. default is 3.5 out of 5.
         """
         # let's retrieve the n first recommended items.
-        top_n = defaultdict(list)
-        for uid, _, true_r, est, _ in predictions:
-            if est >= threshold:
-                top_n[uid].append((true_r, est))
-
-                # Then sort the predictions for each user and retrieve the n highest ones.
-            for uid, user_ratings in top_n.items():
-                user_ratings.sort(key=lambda x: x[1], reverse=True)
-                top_n[uid] = user_ratings[:n]
-
         # we initialize a list to store the average precisions values for every user
         average_precisions = list()
-        # an item here is a vector of the top_n documents for every user
+        top_n = get_top_n(predictions,n)
         for item in top_n:
-
             precisions = list()
-            for i in range(0, len(top_n[item])):
-                if (top_n[item][i][0] >= threshold and top_n[item][i][1] >= threshold):
-                    # we calculate the number of relevant documents.
-                    n_rel = sum((true_r >= threshold) for (true_r, _) in top_n[item][:i])
-                    # we divide on i because we are sure that every document is recommended.
+            for i in range(1, len(top_n[item])):
+
+                if (top_n[item][i][1] >= threshold and top_n[item][i][2] >= threshold):
+                    n_rel = sum((true_r >= threshold) for (_, true_r, _, _) in top_n[item][:i])
                     precisions.append(n_rel / i if i != 0 else 1)
             if precisions:
                 average_precisions.append(np.mean(precisions))
-        return np.mean(average_precisions)
+        return np.mean(average_precisions) if average_precisions else 1
 
     #le plus important est ce qui vient apres !!.
 
@@ -213,7 +201,7 @@ def multi_metrics_evaluation(training_fpath,test_fpath,algorithme,k=10,threshold
         mae = accuracy.mae(predictions,False)
         # ,,,, NDCG mean score.
         ndcg_score = (np.mean(ndcg_ratings))
-        map_score=Mean_Average_precision(predictions,threshold,k)
+        map_score=Mean_Average_precision(predictions,k,threshold)
         execution_time=(time.time() - start_time)
 
         #and we print the results
@@ -229,6 +217,6 @@ def multi_metrics_evaluation(training_fpath,test_fpath,algorithme,k=10,threshold
 
         #we return a dict containing all the scores.
         return {"K": k , "Threshold" : threshold , "Precision@k" :precision ,
-                "Recall@k": recall,"NDCG@k":ndcg_score,"MAE":mae,"RMSE":rmse,
+                "Recall@k": recall,"NDCG@k":ndcg_score,"MAE":mae,"RMSE":rmse,"MAP@k":map_score,
                 "Execution_time": execution_time
                 }
