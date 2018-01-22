@@ -31,22 +31,6 @@ import numpy as np
 ## in our case it's data of December 2008 and is the same for the four scenarios.
 test_set_path="/home/obisama/Desktop/PFE_PFE/pfe/2008/USE_CASE_DATA/TestData/12.csv"
 
-# Case 1 : 1 month
-print("-------Case 1: 1month")
-
-training_set_path="/home/obisama/Desktop/PFE_PFE/pfe/2008/USE_CASE_DATA/1Month/11.csv"
-file_path_training_data = os.path.expanduser(training_set_path)
-reader = Reader(line_format='user item rating timestamp', sep=',')
-training_data = Dataset.load_from_file(file_path_training_data, reader=reader)
-sim_options1 = {'name': 'pearson_baseline', 'user_based': False}
-sim_options2 = {'name': 'pearson_baseline', 'user_based': True}
-algo1 = KNNWithMeans(sim_options=sim_options1)
-algo2 = KNNWithMeans(sim_options=sim_options2)
-dict1 = Em.multi_metrics_evaluation(training_set_path,test_set_path,algo1,10,4)
-dict2 = Em.multi_metrics_evaluation(training_set_path,test_set_path,algo2,10,4)
-print dict
-
-print("------ End Of Case 1")
 
 # Case 1 : 1 month
 print("-------Case 1: 1month")
@@ -59,8 +43,8 @@ sim_options1 = {'name': 'pearson_baseline', 'user_based': False}
 sim_options2 = {'name': 'pearson_baseline', 'user_based': True}
 algo1 = KNNWithMeans(sim_options=sim_options1)
 algo2 = KNNWithMeans(sim_options=sim_options2)
-dict1 = Em.multi_metrics_evaluation(training_set_path,test_set_path,algo1,10,4)
-dict2 = Em.multi_metrics_evaluation(training_set_path,test_set_path,algo2,10,4)
+dict1 = Em.multi_metrics_evaluation(training_set_path,test_set_path,algo1)
+dict2 = Em.multi_metrics_evaluation(training_set_path,test_set_path,algo2)
 print (" dict 1 :")
 print(dict1)
 print("dict 2 :")
@@ -79,8 +63,8 @@ sim_options1 = {'name': 'pearson_baseline', 'user_based': False}
 sim_options2 = {'name': 'pearson_baseline', 'user_based': True}
 algo1 = KNNWithMeans(sim_options=sim_options1)
 algo2 = KNNWithMeans(sim_options=sim_options2)
-dict1 = Em.multi_metrics_evaluation(training_set_path,test_set_path,algo1,10,4)
-dict2 = Em.multi_metrics_evaluation(training_set_path,test_set_path,algo2,10,4)
+dict1 = Em.multi_metrics_evaluation(training_set_path,test_set_path,algo1)
+dict2 = Em.multi_metrics_evaluation(training_set_path,test_set_path,algo2)
 print (" dict 1 :")
 print(dict1)
 print("dict 2 :")
@@ -100,8 +84,8 @@ sim_options1 = {'name': 'pearson_baseline', 'user_based': False}
 sim_options2 = {'name': 'pearson_baseline', 'user_based': True}
 algo1 = KNNWithMeans(sim_options=sim_options1)
 algo2 = KNNWithMeans(sim_options=sim_options2)
-dict1 = Em.multi_metrics_evaluation(training_set_path,test_set_path,algo1,10,4)
-dict2 = Em.multi_metrics_evaluation(training_set_path,test_set_path,algo2,10,4)
+dict1 = Em.multi_metrics_evaluation(training_set_path,test_set_path,algo1)
+dict2 = Em.multi_metrics_evaluation(training_set_path,test_set_path,algo2)
 print (" dict 1 :")
 print(dict1)
 print("dict 2 :")
@@ -120,8 +104,8 @@ sim_options1 = {'name': 'pearson_baseline', 'user_based': False}
 sim_options2 = {'name': 'pearson_baseline', 'user_based': True}
 algo1 = KNNWithMeans(sim_options=sim_options1)
 algo2 = KNNWithMeans(sim_options=sim_options2)
-dict1 = Em.multi_metrics_evaluation(training_set_path,test_set_path,algo1,10,4)
-dict2 = Em.multi_metrics_evaluation(training_set_path,test_set_path,algo2,10,4)
+dict1 = Em.multi_metrics_evaluation(training_set_path,test_set_path,algo1)
+dict2 = Em.multi_metrics_evaluation(training_set_path,test_set_path,algo2)
 print (" dict 1 :")
 print(dict1)
 print("dict 2 :")
