@@ -23,7 +23,7 @@ reader = Reader(line_format='user item rating timestamp', sep=',',skip_lines=1)
 datatest=Dataset.load_from_file(file,reader=reader)
 
 def shuffle(i_data):
-	""" """
+
  random.shuffle(i_data)
  train_data = i_data[:(len(i_data))//9]
  test_data = i_data[len(i_data)//9:]

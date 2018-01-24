@@ -1,61 +1,57 @@
+# coding=utf-8
 import pandas as pd
 import numpy as np
 import time
 t0=time.time()
 
-#we will need movies and their ratings, we import our data and define the format.
+#on importe le fichier des rates et le fichier Movies ainsi les merger selon l'ID du movie.
 ratings_df = pd.read_table('~/ml-1m/ratings.dat', header=None, sep='::', names=['user_id', 'movie_id', 'rating', 'timestamp'])
-movies_df = pd.read_table('~/ml-1m/movies.dat', header=None, sep='::', names=['movie_id', 'movie_title', 'movie_genre'])
-movies_df = pd.concat([movies_df, movies_df.movie_genre.str.get_dummies(sep='|')], axis=1)
+films_df = pd.read_table('~/ml-1m/movies.dat', header=None, sep='::', names=['movie_id', 'movie_title', 'movie_genre'])
+films_df = pd.concat([films_df, films_df.movie_genre.str.get_dummies(sep='|')], axis=1)
 
-# the timestamp of the ratings is not useful for us, we can get rid of it.
+# on aura pas besoin du timestamp
 del ratings_df['timestamp']
 
-#merge movies ids with the movies titles and adding it to rating_df
-ratings_df = pd.merge(ratings_df, movies_df, on='movie_id')[['user_id', 'movie_title', 'movie_id','rating']]
+
+ratings_df = pd.merge(ratings_df, films_df, on='movie_id')[['user_id', 'movie_title', 'movie_id','rating']]
 
 
-# we construct a matrix of (user/film ) 
+# on construit la matrice User/film=score
 #and M(user,film)= rating given to the film by the user
-ratings_mtx_df = ratings_df.pivot_table(values='rating', index='user_id', columns='movie_title')
-ratings_mtx_df.fillna(0, inplace=True)
+ratings_matrice_df = ratings_df.pivot_table(values='rating', index='user_id', columns='movie_title')
+ratings_matrice_df.fillna(0, inplace=True)
 
 
-# movies's indexs
-movie_index = ratings_mtx_df.columns
+# les index des movies
+movie_index = ratings_matrice_df.columns
 
 #we construct here the correlation matrix which is a matrix of mXm dimensions, 
-#Mij represents the correlation between i andj.
-corr_matrix = np.corrcoef(ratings_mtx_df.T)
+#Mij represente la corrélation entre i et j.
+corr_matrice = np.corrcoef(ratings_matrice_df.T)
 
-#as an example, we take Toy Story film as a movie the user watched and liked.
-favoured_movie_title = 'Toy Story (1995)'
-#we get his index
-favoured_movie_index = list(movie_index).index(favoured_movie_title)
-# get the value of correclation for our film.
-P = corr_matrix[favoured_movie_index]
-#we return only movies with a high correlation with Toy Story
+#on prend par exemple le film préferé est Toy story.
+film_pref_title = 'Toy Story (1995)'
+# l'index du film
+film_pref_index = list(movie_index).index(film_pref_title)
+# et on cherche sa corrélation avec d'autres films.
+P = corr_matrice[film_pref_index]
+#on peut retourner les fortes correlation par le print suivant
+#print list(movie_index[(P>0.4) & (P<1.0)])
 
 def get_movie_similarity(movie_title):
     '''
-        this function return the correlation vector for a movie.
-        args:
-            movie_title: title of a movie.
-        returns:
-            vector of the correlation for the movie given in parameters.
+        la fonction retourne le vecteur de correlation pour le film donné en paramétre
+
     '''
     movie_idx = list(movie_index).index(movie_title)
-    return corr_matrix[movie_idx]
+    return corr_matrice[movie_idx]
 
 def get_movie_recommendations(user_movies):
     '''
-        this function returns all the movies sorted by their correlation with the user.
-        args:
-            user_movies: list containg the movies that the user watched and liked.
-        returns :
-            similarities_df: ordered list of movies sorted by their correlation with the user.
+
+            similarities_df: liste ordonnée des films triée par la correlation avec l'utilisateur.
     '''
-    movie_similarities = np.zeros(corr_matrix.shape[0])
+    movie_similarities = np.zeros(corr_matrice.shape[0])
     for movie_id in user_movies:
         movie_similarities = movie_similarities + get_movie_similarity(movie_id)
     similarities_df = pd.DataFrame({
